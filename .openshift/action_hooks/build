@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Exit on first error.
+set -e
+
+# OpenShift sets GIT_DIR to . which terminates pull with an error:
+# Not a git repository: '.'
+unset GIT_DIR
+
+umask 077
+
+# Load common
+source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/common
+
+# Configure versions
+NGINX_VERSION='1.2.6'
+ZLIB_VERSION='1.2.7'
+PCRE_VERSION='8.32'
+PHP_VERSION='5.4.11'
+ICU_VERSION='50.1.2'
+LIBMCRYPT_VERSION='2.5.8'
+#NODE_VERSION='0.8.19'
+NODE_VERSION='0.6.20'
+
+declare -A PHP_PECL
+declare -A PHP_PECL_CONFIGURE
+PHP_PECL=( ["APC"]='3.1.13' ["mongo"]='1.3.4' )
+PHP_PECL_CONFIGURE=( ["APC"]='--enable-apc --enable-apc-debug' )
+
+# Setup dir references
+ROOT_DIR=${OPENSHIFT_RUNTIME_DIR}
+BUILD_DIR=${OPENSHIFT_TMP_DIR}/build
+CONFIG_DIR=${OPENSHIFT_RUNTIME_DIR}/etc
+TEMPLATE_DIR=${OPENSHIFT_REPO_DIR}/.openshift/tmpl
+
+# Load functions
+source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_nginx
+source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_php
+source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_node
+
+# Check nginx
+check_nginx
+
+# Check PHP
+check_php
+
+# Check pecl extensions
+for ext in "${!PHP_PECL[@]}"; do
+    check_pecl ${ext} ${PHP_PECL["$ext"]} ${PHP_PECL_CONFIGURE["$ext"]};
+done
+
+# Check NodeJS
+check_node

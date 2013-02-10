@@ -1,0 +1,77 @@
+#!/bin/sh
+
+function install_node() {
+    local pkg=node-v${NODE_VERSION}.tar.gz
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    echo "Downloading ${pkg}."
+    wget http://nodejs.org/dist/v${NODE_VERSION}/${pkg}
+
+    echo "Unpacking ${pkg}."
+    tar xfz ${pkg}
+    pushd node-v${NODE_VERSION}
+
+    echo "Configuring NodeJs."
+    ./configure \
+        --prefix=${ROOT_DIR}/node/
+
+    echo "Compiling NodeJs."
+    make install
+
+    echo "Cleaning build directory."
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function install_node_proxy() {
+    echo "Creating NPM proxy."
+    mkdir -p ${ROOT_DIR}/bin
+    rm -f ${ROOT_DIR}/bin/npm
+
+    if [ ! -z "${1}" ]; then
+        mkdir -p ${ROOT_DIR}/node/npm
+
+        echo "#!/usr/bin/env node
+        process.env.HOME = process.env.OPENSHIFT_HOMEDIR + \"/app-root/runtime/node/npm/\"
+        require(\"${1}\");" > ${ROOT_DIR}/bin/npm
+    else
+        echo '#!/usr/bin/env node
+        process.env.HOME = process.env.OPENSHIFT_HOMEDIR + "/app-root/runtime/node/npm/"
+        require(process.env.OPENSHIFT_HOMEDIR + "/app-root/runtime/node/bin/npm");' > ${ROOT_DIR}/bin/npm
+    fi
+
+    chmod +x ${ROOT_DIR}/bin/npm
+}
+
+function check_node() {
+    local local_bin=/usr/bin/node
+    local node_bin=${ROOT_DIR}/node/bin/node
+    local node_version=`${local_bin} -v | tr -d '\n'`
+
+    if [[ -e  ${local_bin} ]]; then
+        if [[ v${NODE_VERSION} = ${node_version} ]]; then
+            echo "NodeJs local will be used"
+            install_node_proxy '/usr/bin/npm'
+            return 0
+        fi
+        echo "NodeJs local old, version: ${node_version}."
+    fi
+
+    if [[ ! -e  ${node_bin} ]]; then
+        echo "NodeJs not installed."
+        install_node
+    else
+        node_version=`${node_bin} -v | tr -d '\n'`
+
+        if [[ v${NODE_VERSION} != ${node_version} ]]; then
+            echo "NodeJs old, version: ${node_version}."
+            install_node
+        else
+            echo "NodeJs up to date, version: ${node_version}."
+        fi
+    fi
+    install_node_proxy
+}

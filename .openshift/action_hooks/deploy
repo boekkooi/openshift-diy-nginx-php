@@ -1,0 +1,32 @@
+#!/bin/sh
+
+set -e
+
+source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/common
+
+BUILD_DIR=${OPENSHIFT_TMP_DIR}/build
+NGINX_DIR=${OPENSHIFT_RUNTIME_DIR}/nginx/
+PHP_DIR=${OPENSHIFT_RUNTIME_DIR}/php5/
+TEMPLATE_DIR=${OPENSHIFT_REPO_DIR}/.openshift/tmpl
+
+umask 077
+
+mkdir -p ${BUILD_DIR}
+
+echo "Pre-processing nginx config."
+cp ${TEMPLATE_DIR}/nginx.conf.tmpl ${BUILD_DIR}/nginx.conf
+perl -p -i -e 's/\$\{([^}]+)\}/defined $ENV{$1} ? $ENV{$1} : $&/eg' ${BUILD_DIR}/nginx.conf
+cp ${BUILD_DIR}/nginx.conf ${NGINX_DIR}/conf/nginx.conf
+
+echo "Pre-processing PHP-fpm config."
+cp ${TEMPLATE_DIR}/php-fpm.conf.tmpl ${BUILD_DIR}/php-fpm.conf
+perl -p -i -e 's/\$\{([^}]+)\}/defined $ENV{$1} ? $ENV{$1} : $&/eg' ${BUILD_DIR}/php-fpm.conf
+cp ${BUILD_DIR}/php-fpm.conf ${PHP_DIR}/etc/php-fpm.conf
+
+rm -rf ${BUILD_DIR}
+
+bash_profile=${OPENSHIFT_DATA_DIR}/.bash_profile
+if [[ ! -e  ${bash_profile} ]]; then
+    echo "Copy bash profile."
+    cp ${TEMPLATE_DIR}/bash_profile.tmpl ${bash_profile}
+fi

@@ -1,0 +1,147 @@
+# This nginx config file is preprocessed to replace all ${VARIABLES}
+# with their values.
+
+# Set another default user than root for security reasons
+# user       www www;
+
+# As a thumb rule: One per CPU. If you are serving a large amount
+# of static files, which requires blocking disk reads, you may want
+# to increase this from the number of cpu_cores available on your
+# system.
+#
+# The maximum number of connections for Nginx is calculated by:
+# max_clients = worker_processes * worker_connections
+worker_processes 1;
+
+# Maximum file descriptors that can be opened per process
+# This should be > worker_connections
+worker_rlimit_nofile 8192;
+
+error_log ${OPENSHIFT_LOG_DIR}/error.log;
+pid ${OPENSHIFT_RUN_DIR}/nginx.pid;
+
+events {
+  # When you need > 8000 * cpu_cores connections, you start optimizing
+  # your OS, and this is probably the point at where you hire people
+  # who are smarter than you, this is *a lot* of requests.
+  worker_connections  8000;
+
+  # This sets up some smart queueing for accept(2)'ing requests
+  # Set it to "on" if you have > worker_processes
+  accept_mutex off;
+
+  # These settings are OS specific, by defualt Nginx uses select(2),
+  # however, for a large number of requests epoll(2) and kqueue(2)
+  # are generally faster than the default (select(2))
+  # use epoll; # enable for Linux 2.6+
+  # use kqueue; # enable for *BSD (FreeBSD, OS X, ..)
+}
+
+http {
+    include mime.types;
+    default_type application/octet-stream;
+
+    # Format for our log files
+    log_format   main '$remote_addr - $remote_user [$time_local]  $status '
+      '"$request" $body_bytes_sent "$http_referer" '
+      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    sendfile on;
+    keepalive_timeout 5;
+    access_log ${OPENSHIFT_LOG_DIR}/access.log;
+
+    port_in_redirect off;
+    server_tokens off;
+
+    tcp_nopush on; # off may be better for Comet/long-poll stuff
+    tcp_nodelay off; # on may be better for Comet/long-poll stuff
+
+    # Enable Gzip
+    gzip  on;
+    gzip_http_version 1.0;
+    gzip_comp_level 2;
+    gzip_min_length 1100;
+    gzip_buffers     4 8k;
+    gzip_proxied any;
+    gzip_types
+      # text/html is always compressed by HttpGzipModule
+      text/css
+      text/javascript
+      text/xml
+      text/plain
+      text/x-component
+      application/javascript
+      application/json
+      application/xml
+      application/rss+xml
+      font/truetype
+      font/opentype
+      application/vnd.ms-fontobject
+      image/svg+xml;
+
+    gzip_static on;
+
+    gzip_proxied        expired no-cache no-store private auth;
+    gzip_disable        "MSIE [1-6]\.";
+    gzip_vary           on;
+
+    server {
+        # This will listen on all interfaces, you can instead choose a specific IP
+    	# such as listen x.x.x.x:80;  Setting listen 80 default_server; will make
+    	# this server block the default one if no other blocks match the request
+        listen ${OPENSHIFT_INTERNAL_IP}:${OPENSHIFT_INTERNAL_PORT};
+
+        # Here you can set a server name, you can use wildcards such as *.example.com
+        # however remember if you use server_name *.example.com; You'll only match subdomains
+        # to match both subdomains and the main domain use both example.com and *.example.com
+        server_name  localhost;
+
+        # It is best to place the root of the server block at the server level, and not the location level
+        # any location block path will be relative to this root.
+        root   ${OPENSHIFT_REPO_DIR}/web;
+
+        # Forces modern clients to use secure connections only for at
+        # least 8 days after the header was last returned. See:
+        # https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+        add_header Strict-Transport-Security max-age=691200;
+
+        location / {
+            index  index.html  index.htm  index.php ;
+
+            try_files $uri $uri/ @rewrites;
+        }
+
+        location = /robots.txt  { access_log off; log_not_found off; }
+
+        location ~ /\.          { access_log off; log_not_found off; deny all; }
+        location ~ ~$           { access_log off; log_not_found off; deny all; }
+
+        # Set expires max on static file types
+        location ~* ^.+\.(css|js|jpg|jpeg|gif|png|ico|gz|svg|svgz|ttf|otf|woff|eot|mp4|ogg|ogv|webm)$ {
+            access_log off;
+            log_not_found off;
+
+            # Some basic cache-control for static files to be sent to the browser
+            expires max;
+            add_header Pragma public;
+            add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+        }
+
+        location @rewrites {
+            rewrite ^(.*)$ /index.php/$1 last;
+        }
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        location ~ ^/index\.php(/|$) {
+            fastcgi_pass unix:${OPENSHIFT_RUN_DIR}/php-fpm.socket;
+
+            fastcgi_param SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+            fastcgi_param PATH_INFO $fastcgi_script_name;
+
+            include fastcgi_params;
+        }
+    }
+
+    # opt-in to the future
+    add_header "X-UA-Compatible" "IE=Edge,chrome=1";
+}

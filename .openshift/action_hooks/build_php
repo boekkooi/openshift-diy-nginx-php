@@ -1,0 +1,253 @@
+#!/bin/bash
+
+function install_icu() {
+    local pkg=icu4c-${ICU_VERSION//./_}-src.tgz
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    echo "Downloading ${pkg}."
+    wget http://download.icu-project.org/files/icu4c/${ICU_VERSION}/${pkg}
+
+    echo "Unpacking ${pkg}."
+    tar xfz ${pkg}
+    pushd icu/source/
+
+    echo "Configuring ICU."
+    chmod +x runConfigureICU configure install-sh
+    ./configure \
+        --prefix=${ROOT_DIR}/icu/
+
+    echo "Compiling ICU."
+    make install
+
+    echo "Cleaning build directory."
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function check_icu() {
+    local icu_bin=${ROOT_DIR}/icu/bin/icu-config
+    if [[ ! -e  ${icu_bin} ]]; then
+        echo "LibMCrypt not installed."
+        install_icu
+    else
+        local icu_version=`${icu_bin} --version | tr -d '\n'`
+
+        if [[ ${ICU_VERSION} != ${icu_version} ]]; then
+            echo "ICU old, version: ${icu_version}."
+            install_icu
+        else
+            echo "ICU up to date, version: ${icu_version}."
+        fi
+    fi
+}
+
+function install_libmcrypt() {
+    local pkg=libmcrypt-${LIBMCRYPT_VERSION}.tar.gz
+    local ts=`date +%s`
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    echo "Downloading ${pkg}."
+    wget "http://sourceforge.net/projects/mcrypt/files/Libmcrypt/${LIBMCRYPT_VERSION}/${pkg}/download?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fmcrypt%2F&ts=${ts}&use_mirror=freefr"
+
+    echo "Unpacking ${pkg}."
+    tar xfz ${pkg}
+    pushd libmcrypt-${LIBMCRYPT_VERSION}
+
+    echo "Configuring LibMCrypt."
+    ./configure \
+        --disable-posix-threads \
+        --enable-dynamic-loading \
+		--disable-shared \
+        --prefix=${ROOT_DIR}/libmcrypt/
+
+#		--libdir=${ROOT_DIR}/libmcrypt/lib64 \
+    echo "Compiling LibMCrypt."
+    make install
+
+    echo "Cleaning build directory."
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function check_libmcrypt() {
+    local mcrypt_bin=${ROOT_DIR}/libmcrypt/bin/libmcrypt-config
+    if [[ ! -e  ${mcrypt_bin} ]]; then
+        echo "LibMCrypt not installed."
+        install_libmcrypt
+    else
+        local mcrypt_version=`${mcrypt_bin} --version | tr -d '\n'`
+
+        if [[ ${LIBMCRYPT_VERSION} != ${mcrypt_version} ]]; then
+            echo "LibMCrypt old, version: ${mcrypt_version}."
+            install_libmcrypt
+        else
+            echo "LibMCrypt up to date, version: ${mcrypt_version}."
+        fi
+    fi
+}
+
+
+function install_php() {
+    local pkg=php-${PHP_VERSION}.tar.gz
+
+    mkdir -p ${BUILD_DIR}
+    mkdir -p ${ROOT_DIR}/etc/php5/conf.d
+    pushd ${BUILD_DIR}
+
+    echo "Downloading ${pkg}."
+    wget http://www.php.net/get/${pkg}/from/us1.php.net/mirror
+
+    echo "Unpacking ${pkg}."
+    tar xfz ${pkg}
+    pushd php-${PHP_VERSION}
+
+    echo "Configuring PHP."
+    ./configure \
+        --with-libdir=lib64 \
+        --prefix=${ROOT_DIR}/php5 \
+        --with-config-file-path=${ROOT_DIR}/etc/php5 \
+        --with-config-file-scan-dir=${ROOT_DIR}/etc/php5/conf.d \
+        --with-icu-dir=${ROOT_DIR}/icu \
+        --with-layout=PHP \
+        --with-curl \
+        --with-pear \
+        --with-gd \
+        --with-zlib \
+        --with-mhash \
+        --with-mysql \
+        --with-pgsql \
+        --with-mysqli \
+        --with-pdo-mysql \
+        --with-pdo-pgsql \
+        --with-openssl \
+        --with-xmlrpc \
+        --with-xsl \
+        --with-bz2 \
+        --with-gettext \
+        --with-readline \
+        --with-fpm-user=www-data \
+        --with-fpm-group=www-data \
+        --with-kerberos \
+        --disable-debug \
+        --enable-fpm \
+        --enable-cli \
+        --enable-inline-optimization \
+        --enable-exif \
+        --enable-wddx \
+        --enable-zip \
+        --enable-bcmath \
+        --enable-calendar \
+        --enable-ftp \
+        --enable-mbstring \
+        --enable-soap \
+        --enable-sockets \
+        --enable-shmop \
+        --enable-dba \
+        --enable-sysvsem \
+        --enable-sysvshm \
+        --enable-sysvmsg \
+        --enable-intl
+
+    echo "Compiling PHP."
+    make install
+
+    # Copy configuration file
+    local ini=${TEMPLATE_DIR}/php.ini.tmpl
+    if [[ -e  ${ini} ]]; then
+        echo "Copy ini for ${1}."
+        yes | cp ${ini} ${ROOT_DIR}/etc/php5/php.ini
+    fi
+    local ini=${TEMPLATE_DIR}/php_extra.ini.tmpl
+    if [[ -e  ${ini} ]]; then
+        echo "Copy ini for ${1}."
+        yes | cp ${ini} ${ROOT_DIR}/etc/php5/conf.d/php_extra.ini
+    fi
+
+    echo "Cleaning build directory."
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function check_php() {
+    check_icu
+
+    local php_bin=${ROOT_DIR}/php5/bin/php
+
+    if [[ ! -e  ${php_bin} ]]; then
+        echo "PHP not installed."
+        install_php
+    else
+        local php_version=`${php_bin} -r "echo phpversion();"`
+
+        if [[ ${PHP_VERSION} != ${php_version} ]]; then
+            echo "PHP old, version: ${php_version}."
+            install_php
+        else
+            echo "PHP up to date, version: ${php_version}."
+        fi
+    fi
+}
+
+function install_pecl() {
+    if [ -z "${1}" ] || [ -z "${2}" ]; then
+        echo "check_pecl: expected two arguments"
+        return 1
+    fi
+
+    local pkg=${1}-${2}.tgz
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    echo "Downloading ${pkg}."
+    wget http://pecl.php.net/get/${pkg}
+
+    echo "Unpacking ${pkg}."
+    tar xfz ${pkg}
+    pushd ${1}-${2}
+
+    echo "Configuring ${1}."
+    ${ROOT_DIR}/php5/bin/phpize -clean
+    ./configure \
+        --with-php-config=${ROOT_DIR}/php5/bin/php-config \
+        ${3}
+
+    echo "Compiling ${1}."
+    make install
+
+    # Copy configuration files
+    local ini=${TEMPLATE_DIR}/pecl/${1,,}.ini.tmpl
+    if [[ -e  ${ini} ]]; then
+        echo "Copy ini for ${1}."
+        yes | cp ${ini} ${ROOT_DIR}/etc/php5/conf.d/${1,,}.ini
+    fi
+
+    echo "Cleaning build directory."
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function check_pecl() {
+    if [ -z "${1}" ] || [ -z "${2}" ]; then
+        echo "check_pecl: expected two arguments"
+        return 1
+    fi
+
+    local php_bin=${ROOT_DIR}/php5/bin/php
+    local pecl_version=`${php_bin} -r "echo phpversion('${1}');"`
+
+    if [[ ${2} != ${pecl_version} ]]; then
+        echo "PHP pecl ${1} not installed or old version."
+        install_pecl ${1} ${2} ${3}
+    else
+        echo "PHP pecl ${1} up to date, version: ${2}."
+    fi
+}

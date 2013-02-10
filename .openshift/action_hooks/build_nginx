@@ -1,0 +1,67 @@
+#!/bin/bash
+function install_nginx() {
+    local pkg=nginx-${NGINX_VERSION}.tar.gz
+    local pkg_pcre=pcre-${PCRE_VERSION}.tar.bz2
+    local pkg_zlib=zlib-${ZLIB_VERSION}.tar.bz2
+
+    mkdir -p ${BUILD_DIR}
+    mkdir -p ${ROOT_DIR}/etc/nginx
+    pushd ${BUILD_DIR}
+
+    echo "Downloading ${pkg_pcre}."
+    wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${pkg_pcre}
+
+    echo "Unpacking ${pkg_pcre}."
+    tar xfj ${pkg_pcre}
+
+    echo "Downloading ${pkg_zlib}."
+    wget http://zlib.net/${pkg_zlib}
+
+    echo "Unpacking ${pkg_zlib}."
+    tar xfj ${pkg_zlib}
+
+    echo "Downloading ${pkg}."
+    wget http://nginx.org/download/${pkg}
+
+    echo "Unpacking ${pkg}."
+    tar xfz ${pkg}
+    pushd nginx-${NGINX_VERSION}
+
+    echo "Configuring nginx."
+    ./configure \
+        --with-http_ssl_module \
+        --with-http_sub_module \
+        --with-zlib=${BUILD_DIR}/zlib-${ZLIB_VERSION} \
+        --with-pcre=${BUILD_DIR}/pcre-${PCRE_VERSION} \
+        --with-http_ssl_module \
+        --with-http_realip_module \
+        --with-http_gzip_static_module \
+        --with-ipv6 \
+        --prefix=${ROOT_DIR}/nginx
+
+    echo "Compiling nginx."
+    make install
+
+    echo "Cleaning build directory."
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function check_nginx() {
+    local nginx_bin=${ROOT_DIR}/nginx/sbin/nginx
+
+    if [[ ! -e  ${nginx_bin} ]]; then
+        echo "nginx not installed."
+        install_nginx
+    else
+        local nginx_version=`${nginx_bin} -v 2>&1|cut -d/ -f2`
+
+        if [[ ${NGINX_VERSION} != ${nginx_version} ]]; then
+            echo "nginx old, version: ${nginx_version}."
+            install_nginx
+        else
+            echo "nginx up to date, version: ${nginx_version}."
+        fi
+    fi
+}

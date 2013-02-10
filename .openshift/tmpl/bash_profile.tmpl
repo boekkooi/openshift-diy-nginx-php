@@ -1,0 +1,6 @@
+export OPENSHIFT_RUNTIME_DIR=${OPENSHIFT_HOMEDIR}/diy-0.1/runtime/
+
+# We can't use PATH because of OpenShift
+alias npm='$OPENSHIFT_HOMEDIR/app-root/runtime/bin/npm'
+alias php='$OPENSHIFT_HOMEDIR/app-root/runtime/php5/bin/php'
+alias php-fpm='$OPENSHIFT_HOMEDIR/app-root/runtime/php5/sbin/php-fpm'

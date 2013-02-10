@@ -1,0 +1,14 @@
+#!/bin/bash
+# The logic to start up your application should be put in this
+# script. The application will work only if it binds to
+# $OPENSHIFT_INTERNAL_IP:8080
+
+set -e
+
+source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/common
+
+echo "Starting nginx."
+${OPENSHIFT_RUNTIME_DIR}/nginx/sbin/nginx
+
+echo "Starting php-fpm."
+${OPENSHIFT_RUNTIME_DIR}/php5/sbin/php-fpm

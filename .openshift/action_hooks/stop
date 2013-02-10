@@ -1,0 +1,13 @@
+#!/bin/bash
+
+source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/common
+
+echo "Stopping nginx."
+kill -QUIT `cat ${OPENSHIFT_RUN_DIR}/nginx.pid`
+
+echo "Stopping PHP-fpm."
+kill -QUIT `cat ${OPENSHIFT_RUN_DIR}/php-fpm.pid`
+
+# Always succeed, otherwise OpenShift declines to run build and start
+# hooks.
+exit 0
