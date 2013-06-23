@@ -89,7 +89,7 @@ http {
         # This will listen on all interfaces, you can instead choose a specific IP
     	# such as listen x.x.x.x:80;  Setting listen 80 default_server; will make
     	# this server block the default one if no other blocks match the request
-        listen ${OPENSHIFT_INTERNAL_IP}:${OPENSHIFT_INTERNAL_PORT};
+        listen ${OPENSHIFT_DIY_IP}:${OPENSHIFT_DIY_PORT};
 
         # Here you can set a server name, you can use wildcards such as *.example.com
         # however remember if you use server_name *.example.com; You'll only match subdomains

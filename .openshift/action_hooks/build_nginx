@@ -2,14 +2,14 @@
 function install_nginx() {
     local pkg=nginx-${NGINX_VERSION}.tar.gz
     local pkg_pcre=pcre-${PCRE_VERSION}.tar.bz2
-    local pkg_zlib=zlib-${ZLIB_VERSION}.tar.bz2
+    local pkg_zlib=zlib-${ZLIB_VERSION}.tar.gz
 
     mkdir -p ${BUILD_DIR}
     mkdir -p ${ROOT_DIR}/etc/nginx
     pushd ${BUILD_DIR}
 
     echo "Downloading ${pkg_pcre}."
-    wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${pkg_pcre}
+    wget --output-document=./${pkg_pcre} ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${pkg_pcre}
 
     echo "Unpacking ${pkg_pcre}."
     tar xfj ${pkg_pcre}
@@ -18,7 +18,7 @@ function install_nginx() {
     wget http://zlib.net/${pkg_zlib}
 
     echo "Unpacking ${pkg_zlib}."
-    tar xfj ${pkg_zlib}
+    tar xfz ${pkg_zlib}
 
     echo "Downloading ${pkg}."
     wget http://nginx.org/download/${pkg}

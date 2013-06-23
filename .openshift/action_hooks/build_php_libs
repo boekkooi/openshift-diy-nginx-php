@@ -1,0 +1,136 @@
+#!/bin/sh
+
+function check_libtool() {
+    local libtool_bin=${ROOT_DIR}/libs/bin/libtool
+    if [[ ! -e  ${libtool_bin} ]]; then
+        echo "Libtool not installed."
+        install_libtool
+    else
+        local libtool_version=`${libtool_bin} --version | head -n 1 | grep -oh '[0-9.]*$' | tr -d '\n'`
+
+        if [[ ${LIBTOOL_VERSION} != ${libtool_version} ]]; then
+            echo "Libtool old, version: ${libtool_version}."
+            install_libtool
+        else
+            echo "Libtool up to date, version: ${libtool_version}."
+        fi
+    fi
+}
+
+function install_libtool() {
+    local pkg=libtool-${LIBTOOL_VERSION}.tar.gz
+    local ts=`date +%s`
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    echo "Downloading ${pkg}."
+    wget --output-document=./${pkg} "http://gnu.xl-mirror.nl/libtool/${pkg}"
+
+    echo "Unpacking ${pkg}."
+    tar xfz ${pkg}
+    pushd libtool-${LIBTOOL_VERSION}
+
+    echo "Configuring Libtool."
+    mkdir -p ${ROOT_DIR}/libs/lib64/
+    ./configure --prefix=${ROOT_DIR}/libs/ --libdir=${ROOT_DIR}/libs/lib64
+    echo "Compiling Libtool."
+    make install
+
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function install_libmcrypt() {
+    local pkg=libmcrypt-${LIBMCRYPT_VERSION}.tar.gz
+    local ts=`date +%s`
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    echo "Downloading ${pkg}."
+    wget --output-document=./${pkg} "http://sourceforge.net/projects/mcrypt/files/Libmcrypt/${LIBMCRYPT_VERSION}/${pkg}/download?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fmcrypt%2F&ts=${ts}&use_mirror=freefr"
+
+    echo "Unpacking ${pkg}."
+    tar xfz ${pkg}
+    pushd libmcrypt-${LIBMCRYPT_VERSION}
+
+    echo "Configuring LibMCrypt."
+    mkdir -p ${ROOT_DIR}/libs/lib64/
+    ./configure \
+        --disable-posix-threads \
+        --enable-dynamic-loading \
+		--disable-shared \
+        --prefix=${ROOT_DIR}/libs/ \
+        --libdir=${ROOT_DIR}/libs/lib64/
+    echo "Compiling LibMCrypt."
+    make install
+
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function check_libmcrypt() {
+    check_libtool
+
+    local mcrypt_bin=${ROOT_DIR}/libs/bin/libmcrypt-config
+    if [[ ! -e  ${mcrypt_bin} ]]; then
+        echo "LibMCrypt not installed."
+        install_libmcrypt
+    else
+        local mcrypt_version=`${mcrypt_bin} --version | tr -d '\n'`
+
+        if [[ ${LIBMCRYPT_VERSION} != ${mcrypt_version} ]]; then
+            echo "LibMCrypt old, version: ${mcrypt_version}."
+            install_libmcrypt
+        else
+            echo "LibMCrypt up to date, version: ${mcrypt_version}."
+        fi
+    fi
+}
+
+function install_icu() {
+    local pkg=icu4c-${ICU_VERSION//./_}-src.tgz
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    echo "Downloading ${pkg}."
+    wget --output-document=./${pkg} http://download.icu-project.org/files/icu4c/${ICU_VERSION}/${pkg}
+
+    echo "Unpacking ${pkg}."
+    tar xfz ${pkg}
+    pushd icu/source/
+
+    echo "Configuring ICU."
+    chmod +x runConfigureICU configure install-sh
+    ./configure \
+        --prefix=${ROOT_DIR}/libs/
+
+    echo "Compiling ICU."
+    make install
+
+    echo "Cleaning build directory."
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function check_icu() {
+    local icu_bin=${ROOT_DIR}/libs/bin/icu-config
+    if [[ ! -e  ${icu_bin} ]]; then
+        echo "ICU not installed."
+        install_icu
+    else
+        local icu_version=`${icu_bin} --version | tr -d '\n'`
+
+        if [[ ${ICU_VERSION} != ${icu_version} ]]; then
+            echo "ICU old, version: ${icu_version}."
+            install_icu
+        else
+            echo "ICU up to date, version: ${icu_version}."
+        fi
+    fi
+}
