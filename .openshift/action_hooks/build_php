@@ -7,61 +7,65 @@ function install_php() {
     mkdir -p ${ROOT_DIR}/etc/php5/conf.d
     pushd ${BUILD_DIR}
 
-    echo "Downloading ${pkg}."
-    wget --output-document=./${pkg} http://www.php.net/get/${pkg}/from/us1.php.net/mirror
+    if [ ! -d php-${PHP_VERSION} ]; then
+        echo "Downloading ${pkg}."
+        wget --output-document=./${pkg} http://www.php.net/get/${pkg}/from/us1.php.net/mirror
 
-    echo "Unpacking ${pkg}."
-    tar xfz ${pkg}
+        echo "Unpacking ${pkg}."
+        tar xfz ${pkg}
+    fi
     pushd php-${PHP_VERSION}
 
-    echo "Configuring PHP."
-    ./configure \
-        --with-libdir=lib64 \
-        --prefix=${ROOT_DIR}/php5 \
-        --with-config-file-path=${ROOT_DIR}/etc/php5 \
-        --with-config-file-scan-dir=${ROOT_DIR}/etc/php5/conf.d \
-        --with-icu-dir=${ROOT_DIR}/libs \
-        --with-mcrypt=${ROOT_DIR}/libs \
-        --with-layout=PHP \
-        --with-curl \
-        --with-pear \
-        --with-gd \
-        --with-zlib \
-        --with-mhash \
-        --with-mysql \
-        --with-pgsql \
-        --with-mysqli \
-        --with-pdo-mysql \
-        --with-pdo-pgsql \
-        --with-openssl \
-        --with-xmlrpc \
-        --with-xsl \
-        --with-bz2 \
-        --with-gettext \
-        --with-readline \
-        --with-fpm-user=www-data \
-        --with-fpm-group=www-data \
-        --with-kerberos \
-        --disable-debug \
-        --enable-fpm \
-        --enable-cli \
-        --enable-inline-optimization \
-        --enable-exif \
-        --enable-wddx \
-        --enable-zip \
-        --enable-bcmath \
-        --enable-calendar \
-        --enable-ftp \
-        --enable-mbstring \
-        --enable-soap \
-        --enable-sockets \
-        --enable-shmop \
-        --enable-dba \
-        --enable-sysvsem \
-        --enable-sysvshm \
-        --enable-sysvmsg \
-        --enable-intl \
-        --enable-opcache
+    if [[ ! -f config.log || `tail -n 1 config.log | tr -d '\n'` !=  'configure: exit 0' ]]; then
+        echo "Configuring PHP."
+        ./configure \
+            --with-libdir=lib64 \
+            --prefix=${ROOT_DIR}/php5 \
+            --with-config-file-path=${ROOT_DIR}/etc/php5 \
+            --with-config-file-scan-dir=${ROOT_DIR}/etc/php5/conf.d \
+            --with-icu-dir=${ROOT_DIR}/libs \
+            --with-mcrypt=${ROOT_DIR}/libs \
+            --with-layout=PHP \
+            --with-curl \
+            --with-pear \
+            --with-gd \
+            --with-zlib \
+            --with-mhash \
+            --with-mysql \
+            --with-pgsql \
+            --with-mysqli \
+            --with-pdo-mysql \
+            --with-pdo-pgsql \
+            --with-openssl \
+            --with-xmlrpc \
+            --with-xsl \
+            --with-bz2 \
+            --with-gettext \
+            --with-readline \
+            --with-fpm-user=www-data \
+            --with-fpm-group=www-data \
+            --with-kerberos \
+            --disable-debug \
+            --enable-fpm \
+            --enable-cli \
+            --enable-inline-optimization \
+            --enable-exif \
+            --enable-wddx \
+            --enable-zip \
+            --enable-bcmath \
+            --enable-calendar \
+            --enable-ftp \
+            --enable-mbstring \
+            --enable-soap \
+            --enable-sockets \
+            --enable-shmop \
+            --enable-dba \
+            --enable-sysvsem \
+            --enable-sysvshm \
+            --enable-sysvmsg \
+            --enable-intl \
+            --enable-opcache
+    fi
 
     echo "Compiling PHP."
     make install

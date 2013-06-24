@@ -1,5 +1,4 @@
 # boekkooi/openshift-nginx-php
-============================
 This is a sample repository to get nginx + php fpm running on openshift.
 
 More information about openshift: https://openshift.redhat.com/
@@ -31,8 +30,6 @@ Just customize away.
 
 The web folder currently used. You can change this in `.openshift/tmpl/nginx.conf.tmpl`.
 
-http://ftpmirror.gnu.org/libtool/libtool-2.4.2.tar.gz
-
 ## Usage
 
 To get PHP 5.5 working at OpenShift, you have to do the following:
@@ -62,7 +59,7 @@ Currently the `.openshift/tmpl/nginx.conf.tmpl` configuration template for nginx
 You can change this by editing the template file. Also see http://wiki.nginx.org/Symfony for some extra information.
 
 #### Openshift disconnects on build
-This seems to be a problem within openshift just do a `git push --force "openshift" master:master` and let it finish that way.
+This seems to be a problem within openshift just do a `git push --force "openshift" master:master` and let it finish that way (https://www.openshift.com/forums/openshift/openshift-build-timeout
 
 ## Thanks
 

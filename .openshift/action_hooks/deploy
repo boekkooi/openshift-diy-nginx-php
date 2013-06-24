@@ -26,7 +26,5 @@ cp ${BUILD_DIR}/php-fpm.conf ${PHP_DIR}/etc/php-fpm.conf
 rm -rf ${BUILD_DIR}
 
 bash_profile=${OPENSHIFT_DATA_DIR}/.bash_profile
-if [[ ! -e  ${bash_profile} ]]; then
-    echo "Copy bash profile."
-    cp ${TEMPLATE_DIR}/bash_profile.tmpl ${bash_profile}
-fi
+echo "Copy bash profile."
+cp ${TEMPLATE_DIR}/bash_profile.tmpl ${bash_profile}

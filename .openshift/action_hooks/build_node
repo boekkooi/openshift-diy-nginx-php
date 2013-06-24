@@ -35,15 +35,17 @@ function install_node_proxy() {
         mkdir -p ${ROOT_DIR}/node/npm
 
         echo "#!/usr/bin/env node
-        process.env.HOME = process.env.OPENSHIFT_HOMEDIR + \"/app-root/runtime/node/npm/\"
+        process.env.HOME = process.env.OPENSHIFT_DIY_DIR + \"/runtime/node/npm/\"
         require(\"${1}\");" > ${ROOT_DIR}/bin/npm
     else
         echo '#!/usr/bin/env node
-        process.env.HOME = process.env.OPENSHIFT_HOMEDIR + "/app-root/runtime/node/npm/"
-        require(process.env.OPENSHIFT_HOMEDIR + "/app-root/runtime/node/bin/npm");' > ${ROOT_DIR}/bin/npm
+        process.env.HOME = process.env.OPENSHIFT_DIY_DIR + "/runtime/node/npm/"
+        require(process.env.OPENSHIFT_DIY_DIR + "/runtime/node/bin/npm");' > ${ROOT_DIR}/bin/npm
     fi
 
     chmod +x ${ROOT_DIR}/bin/npm
+
+    # ${ROOT_DIR}/bin/npm config set prefix {ROOT_DIR}/node/
 }
 
 function check_node() {
