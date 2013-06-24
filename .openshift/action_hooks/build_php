@@ -21,8 +21,8 @@ function install_php() {
         ./configure \
             --with-libdir=lib64 \
             --prefix=${ROOT_DIR}/php5 \
-            --with-config-file-path=${ROOT_DIR}/etc/php5 \
-            --with-config-file-scan-dir=${ROOT_DIR}/etc/php5/conf.d \
+            --with-config-file-path=${ROOT_DIR}/etc/php5/ \
+            --with-config-file-scan-dir=${ROOT_DIR}/etc/php5/conf.d/ \
             --with-icu-dir=${ROOT_DIR}/libs \
             --with-mcrypt=${ROOT_DIR}/libs \
             --with-layout=PHP \
@@ -75,6 +75,9 @@ function install_php() {
     if [[ -e  ${ini} ]]; then
         echo "Copy ini for ${1}."
         yes | cp ${ini} ${ROOT_DIR}/etc/php5/php.ini
+    else
+        echo "Copy php.ini from php.ini-production."
+        yes | cp php.ini-production ${ROOT_DIR}/etc/php5/php.ini
     fi
     local ini=${TEMPLATE_DIR}/php_extra.ini.tmpl
     if [[ -e  ${ini} ]]; then
