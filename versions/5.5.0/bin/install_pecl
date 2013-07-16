@@ -1,0 +1,11 @@
+#!/bin/bash
+declare -A PHP_PECL
+declare -A PHP_PECL_CONFIGURE
+PHP_PECL=( ["mongo"]='1.4.1' )
+PHP_PECL_CONFIGURE=( ["mongo"]='' )
+
+# Download and build PECL extensions
+source ${OPENSHIFT_PHP_DIR}/versions/shared/bin/install_util
+for ext in "${!PHP_PECL[@]}"; do
+    install_pecl ${ext} ${PHP_PECL["$ext"]} ${PHP_PECL_CONFIGURE["$ext"]};
+done

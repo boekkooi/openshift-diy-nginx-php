@@ -1,0 +1,97 @@
+#!/bin/bash -e
+
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+HTTPD_CFG_FILE=$OPENSHIFT_PHP_DIR/configuration/etc/conf/httpd_nolog.conf
+HTTPD_CFG_DIR=$OPENSHIFT_PHP_DIR/configuration/etc/conf.d
+HTTPD_PID_FILE=$OPENSHIFT_PHP_DIR/run/httpd.pid
+
+function apache() {
+    client_message "$2 Apache+mod_php HTTPD server"
+    [ "$1" != "stop" ] && update_httpd_passenv $HTTPD_CFG_FILE
+    ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
+    /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k $1
+    return $?
+}
+
+function stop() {
+    client_message "Stopping Apache+mod_php HTTPD server"
+    ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
+    if [ -f "$HTTPD_PID_FILE" ]; then
+        httpd_pid=`cat "$HTTPD_PID_FILE" 2> /dev/null`
+    fi
+    /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -k stop
+    wait_for_stop $httpd_pid
+}
+
+function configtest() {
+    client_message "Testing Apache *.conf files"
+    /usr/sbin/httpd -C "Include $HTTPD_CFG_DIR/*.conf" -f $HTTPD_CFG_FILE -t
+    return $?
+}
+
+function status() {
+   if output=$(curl http://$OPENSHIFT_PHP_IP:$OPENSHIFT_PHP_PORT/server-status?auto 2>&1 )
+   then
+      client_result "Application is running"
+      client_result $output
+      return 0
+   else
+      client_result "Application is either stopped or inaccessible"
+      # FIXME: We should return 1 once we can handle non-zero return statuses
+      #        (This should be possible after we remove the v1 logic completely)
+      return 0
+   fi
+}
+
+function tidy() {
+    client_message "Emptying log dir: $OPENSHIFT_PHP_LOG_DIR"
+    shopt -s dotglob
+    rm -rf $OPENSHIFT_PHP_LOG_DIR/*
+    return 0
+}
+
+function build() {
+    local PEAR_BIN="$OPENSHIFT_PHP_DIR/configuration/usr/bin/pear"
+    local PHP_BIN="$OPENSHIFT_PHP_DIR/configuration/usr/bin/pear"
+    if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
+    then
+        echo ".openshift/markers/force_clean_build found!  Recreating pear libs" 1>&2
+        rm -rf "${OPENSHIFT_PHP_DIR}"/phplib/pear/*
+        mkdir -p "${OPENSHIFT_PHP_DIR}"/phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
+    fi
+
+    if [ -f ${OPENSHIFT_REPO_DIR}deplist.txt ]
+    then
+        for f in $(cat ${OPENSHIFT_REPO_DIR}deplist.txt)
+        do
+            echo "Checking pear: $f"
+            echo
+            if ${PEAR_BIN} list "$f" > /dev/null
+            then
+                ${PEAR_BIN} upgrade "$f"
+            elif ! ( ${PHP_BIN} -c "${OPENSHIFT_PHP_DIR}"/conf -m | grep -i -q \^`basename "$f"`\$ )
+            then
+                ${PEAR_BIN} install --alldeps "$f"
+            else
+                echo "Extension already installed in the system: $f"
+            fi
+        done
+    fi
+    return 0
+}
+
+case "$1" in
+  start)           apache start "Starting" ;;
+  stop)            stop ;;
+  restart)         apache restart "Restarting" ;;
+  reload|graceful) apache graceful "Restarting gracefully" ;;
+  status)          status ;;
+  configtest)      configtest ;;
+  tidy)            tidy ;;
+  build)           build ;;
+  deploy)          exit 0 ;; # Nothing to deploy on template PHP cartridge
+  *)               exit 0
+esac
+
+exit $?

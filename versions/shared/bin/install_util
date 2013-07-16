@@ -1,0 +1,35 @@
+#!/bin/bash
+function install_pecl() {
+    if [ -z "${1}" ] || [ -z "${2}" ]; then
+        echo "install_pecl: expected two arguments"
+        return 1
+    fi
+
+    local ROOT_DIR=$OPENSHIFT_PHP_DIR/configuration
+    local BUILD_DIR=${OPENSHIFT_TMP_DIR}/build
+    local pkg=${1}-${2}.tgz
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    echo "Downloading ${pkg}."
+    wget http://pecl.php.net/get/${pkg}
+
+    echo "Unpacking ${pkg}."
+    tar xfz ${pkg}
+    pushd ${1}-${2}
+
+    echo "Configuring ${1}."
+    ${ROOT_DIR}/usr/bin/phpize -clean
+    ./configure \
+        --with-php-config=${ROOT_DIR}/usr/bin/php-config \
+        ${3-}
+
+    echo "Compiling ${1}."
+    make install
+
+    echo "Cleaning build directory."
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
