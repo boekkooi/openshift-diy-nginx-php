@@ -59,8 +59,9 @@ Currently the `.openshift/tmpl/nginx.conf.tmpl` configuration template for nginx
 You can change this by editing the template file. Also see http://wiki.nginx.org/Symfony for some extra information.
 
 #### Openshift disconnects on build
-This seems to be a problem within openshift just do a `git push --force "openshift" master:master` and let it finish that way (https://www.openshift.com/forums/openshift/openshift-build-timeout
+This seems to be a problem within openshift (see https://www.openshift.com/forums/openshift/openshift-build-timeout).
 
+To resume the build, first make an arbitary change to your local repo (e.g. add some text to README.md), commit that change and then do another `git push --force "openshift" master:master`. 
 ## Thanks
 
 Thanks to the following people:
