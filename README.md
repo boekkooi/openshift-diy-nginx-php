@@ -61,7 +61,7 @@ You can change this by editing the template file. Also see http://wiki.nginx.org
 #### Openshift disconnects on build
 This seems to be a problem within openshift (see https://www.openshift.com/forums/openshift/openshift-build-timeout).
 
-To resume the build, make an arbitary change to your local repo, commit that and then do another `git push --force "openshift" master:master`. The build should resume from where it left off.
+To resume the build, first make an arbitary change to your local repo (e.g. add some text to README.md), commit that change and then do another `git push --force "openshift" master:master`. 
 ## Thanks
 
 Thanks to the following people:
