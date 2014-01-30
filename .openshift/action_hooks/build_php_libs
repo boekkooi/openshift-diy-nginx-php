@@ -62,6 +62,7 @@ function install_libmcrypt() {
         --disable-posix-threads \
         --enable-dynamic-loading \
 		--disable-shared \
+		--with-included-algos=cbc,cfb,ctr,ecb,ncfb,nofb,ofb,stream,cast-128,gost,rijndael-128,twofish,arcfour,cast-256,loki97,rijndael-192,saferplus,wake,blowfish-compat,des,rijndael-256,serpent,xtea,blowfish,enigma,rc2,tripledes \
         --prefix=${ROOT_DIR}/libs/ \
         --libdir=${ROOT_DIR}/libs/lib64/
     echo "Compiling LibMCrypt."
