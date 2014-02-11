@@ -28,7 +28,6 @@ function install_php() {
             --with-layout=PHP \
             --with-curl \
             --with-pear \
-            --with-gd \
             --with-zlib \
             --with-mhash \
             --with-mysql \
@@ -45,6 +44,13 @@ function install_php() {
             --with-fpm-user=www-data \
             --with-fpm-group=www-data \
             --with-kerberos \
+            --with-gd \
+            --with-jpeg-dir \
+            --with-png-dir \
+            --with-png-dir \
+            --with-xpm-dir \
+            --with-freetype-dir \
+            --enable-gd-native-ttf \
             --disable-debug \
             --enable-fpm \
             --enable-cli \
