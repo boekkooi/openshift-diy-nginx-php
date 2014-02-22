@@ -17,8 +17,8 @@ worker_processes 1;
 # This should be > worker_connections
 worker_rlimit_nofile 8192;
 
-error_log ${OPENSHIFT_LOG_DIR}/error.log;
-pid ${OPENSHIFT_RUN_DIR}/nginx.pid;
+error_log ${OPENSHIFT_DIY_LOG_DIR}/error.log;
+pid ${OPENSHIFT_DIY_DIR}/runtime/nginx.pid;
 
 events {
   # When you need > 8000 * cpu_cores connections, you start optimizing
@@ -48,7 +48,7 @@ http {
 
     sendfile on;
     keepalive_timeout 5;
-    access_log ${OPENSHIFT_LOG_DIR}/access.log;
+    access_log ${OPENSHIFT_DIY_LOG_DIR}/access.log;
 
     port_in_redirect off;
     server_tokens off;
@@ -133,7 +133,7 @@ http {
 
         # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
         location ~ ^/index\.php(/|$) {
-            fastcgi_pass unix:${OPENSHIFT_RUN_DIR}/php-fpm.socket;
+            fastcgi_pass unix:${OPENSHIFT_DIY_DIR}/runtime/php-fpm.socket;
 
             fastcgi_param SCRIPT_FILENAME    $document_root$fastcgi_script_name;
             fastcgi_param PATH_INFO $fastcgi_script_name;
