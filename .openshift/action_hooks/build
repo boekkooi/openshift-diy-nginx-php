@@ -13,7 +13,7 @@ umask 077
 source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/common
 
 # Configure versions
-NGINX_VERSION='1.5.8'
+NGINX_VERSION='1.5.12'
 ZLIB_VERSION='1.2.8'
 PCRE_VERSION='8.34'
 
