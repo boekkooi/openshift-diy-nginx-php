@@ -29,7 +29,7 @@ pid = ${OPENSHIFT_RUN_DIR}/php-fpm.pid
 ; in a local file.
 ; Note: the default prefix is /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php5/var
 ; Default Value: log/php-fpm.log
-error_log = ${OPENSHIFT_LOG_DIR}/php-fpm.log
+error_log = ${OPENSHIFT_DIY_LOG_DIR}/php-fpm.log
 
 ; syslog_facility is used to specify what type of program is logging the
 ; message. This lets syslogd specify that messages from different facilities
@@ -360,7 +360,7 @@ pm.max_spare_servers = 3
 
 ; The access log file
 ; Default: not set
-;access.log = ${OPENSHIFT_LOG_DIR}/$pool.access.log
+;access.log = ${OPENSHIFT_DIY_LOG_DIR}/$pool.access.log
 
 ; The access log format.
 ; The following syntax is allowed
