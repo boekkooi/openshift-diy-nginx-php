@@ -10,10 +10,11 @@ function install_php() {
     if [ ! -d php-${PHP_VERSION} ]; then
         echo "Downloading ${pkg}."
         wget --output-document=./${pkg} http://www.php.net/get/${pkg}/from/us1.php.net/mirror
-
-        echo "Unpacking ${pkg}."
-        tar xfz ${pkg}
     fi
+
+    echo "Unpacking ${pkg}."
+    safe_unpack ${pkg}
+
     pushd php-${PHP_VERSION}
 
     if [[ ! -f config.log || `tail -n 1 config.log | tr -d '\n'` !=  'configure: exit 0' ]]; then
@@ -133,7 +134,7 @@ function install_pecl() {
     wget http://pecl.php.net/get/${pkg}
 
     echo "Unpacking ${pkg}."
-    tar xfz ${pkg}
+    safe_unpack ${pkg}
     pushd ${1}-${2}
 
     echo "Configuring ${1}."

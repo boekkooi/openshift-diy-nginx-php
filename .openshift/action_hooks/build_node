@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 function install_node() {
     local pkg=node-v${NODE_VERSION}.tar.gz
@@ -10,7 +10,7 @@ function install_node() {
     wget http://nodejs.org/dist/v${NODE_VERSION}/${pkg}
 
     echo "Unpacking ${pkg}."
-    tar xfz ${pkg}
+    safe_unpack ${pkg}
     pushd node-v${NODE_VERSION}
 
     echo "Configuring NodeJs."

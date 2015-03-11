@@ -1,0 +1,54 @@
+#!/bin/bash
+
+function safe_unpack() {
+    if [ -z "${1}" ]; then
+        echo "unpack: expected 1 argument."
+        return 1
+    fi
+    local pkg=${1}
+
+    # Resolve extraction dir and tar arguments
+    local extract_dir=''
+    local tar_args=xfz
+    if [[ "${pkg}" == *'.tar.gz' ]]; then
+        extract_dir=${1:0:-7}
+    elif [[ "${pkg}" == *'.tgz' ]]; then
+        extract_dir=${1:0:-4}
+    elif [[ "${pkg}" == *'.tar.bz2' ]]; then
+        tar_args=xfj
+        extract_dir=${1:0:-8}
+    else
+        echo "Unable extract file ${pkg}: unknown extension."
+        exit -1
+    fi
+
+    # Was a extraction dir given
+    if [ ! -z "${2}" ]; then
+        extract_dir=${2}
+    fi
+
+    # Create a file m5
+    local check_file=`md5sum ${pkg} | awk '{ print $1 }'`
+
+    # Check if the md5 exists as a file
+    if [ -f ${check_file} ]; then
+        echo "unpack: cleaning failed extraction."
+        # We know extraction failed previously
+        # So remove that folder
+        rm -rf "${extract_dir}"
+    elif [ -d "${extract_dir}" ]; then
+        # The directory exists so don't extract again
+        echo "unpack: no need to unpack, directory exists."
+        return 0
+    fi
+
+    # Extract
+    touch ${check_file}
+    tar ${tar_args} "${pkg}"
+
+    # Done so remove the check file
+    rm ${check_file}
+    echo "unpack: Done."
+
+    return 0
+}

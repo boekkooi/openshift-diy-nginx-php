@@ -37,6 +37,7 @@ CONFIG_DIR=${OPENSHIFT_DIY_DIR}/conf
 TEMPLATE_DIR=${OPENSHIFT_REPO_DIR}/.openshift/tmpl
 
 # Load functions
+source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_util
 source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_nginx
 source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_php_libs
 source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_php

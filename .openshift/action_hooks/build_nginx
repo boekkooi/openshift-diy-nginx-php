@@ -1,4 +1,5 @@
 #!/bin/bash
+
 function install_nginx() {
     local pkg=nginx-${NGINX_VERSION}.tar.gz
     local pkg_pcre=pcre-${PCRE_VERSION}.tar.bz2
@@ -12,19 +13,19 @@ function install_nginx() {
     wget --output-document=./${pkg_pcre} ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${pkg_pcre}
 
     echo "Unpacking ${pkg_pcre}."
-    tar xfj ${pkg_pcre}
+    safe_unpack ${pkg_pcre}
 
     echo "Downloading ${pkg_zlib}."
     wget http://zlib.net/${pkg_zlib}
 
     echo "Unpacking ${pkg_zlib}."
-    tar xfz ${pkg_zlib}
+    safe_unpack ${pkg_zlib}
 
     echo "Downloading ${pkg}."
     wget http://nginx.org/download/${pkg}
 
     echo "Unpacking ${pkg}."
-    tar xfz ${pkg}
+    safe_unpack ${pkg}
     pushd nginx-${NGINX_VERSION}
 
     echo "Configuring nginx."

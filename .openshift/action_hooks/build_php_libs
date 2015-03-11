@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 function check_libtool() {
     local libtool_bin=${ROOT_DIR}/libs/bin/libtool
@@ -28,7 +28,7 @@ function install_libtool() {
     wget --output-document=./${pkg} "http://gnu.xl-mirror.nl/libtool/${pkg}"
 
     echo "Unpacking ${pkg}."
-    tar xfz ${pkg}
+    safe_unpack ${pkg}
     pushd libtool-${LIBTOOL_VERSION}
 
     echo "Configuring Libtool."
@@ -53,7 +53,7 @@ function install_libmcrypt() {
     wget --output-document=./${pkg} "http://sourceforge.net/projects/mcrypt/files/Libmcrypt/${LIBMCRYPT_VERSION}/${pkg}/download?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fmcrypt%2F&ts=${ts}&use_mirror=freefr"
 
     echo "Unpacking ${pkg}."
-    tar xfz ${pkg}
+    safe_unpack ${pkg}
     pushd libmcrypt-${LIBMCRYPT_VERSION}
 
     echo "Configuring LibMCrypt."
@@ -102,7 +102,7 @@ function install_icu() {
     wget --output-document=./${pkg} http://download.icu-project.org/files/icu4c/${ICU_VERSION}/${pkg}
 
     echo "Unpacking ${pkg}."
-    tar xfz ${pkg}
+    safe_unpack ${pkg} icu
     pushd icu/source/
 
     echo "Configuring ICU."
