@@ -6,17 +6,20 @@ function safe_unpack() {
         return 1
     fi
     local pkg=${1}
+    local pkg_len=${#pkg}
 
     # Resolve extraction dir and tar arguments
     local extract_dir=''
+
     local tar_args=xfz
+    local extract_len=0
     if [[ "${pkg}" == *'.tar.gz' ]]; then
-        extract_dir=${1:0:-7}
+        extract_len=$((pkg_len - 7))
     elif [[ "${pkg}" == *'.tgz' ]]; then
-        extract_dir=${1:0:-4}
+        extract_len=$((pkg_len - 4))
     elif [[ "${pkg}" == *'.tar.bz2' ]]; then
+        extract_len=$((pkg_len - 8))
         tar_args=xfj
-        extract_dir=${1:0:-8}
     else
         echo "Unable extract file ${pkg}: unknown extension."
         exit -1
@@ -24,7 +27,9 @@ function safe_unpack() {
 
     # Was a extraction dir given
     if [ ! -z "${2}" ]; then
-        extract_dir=${2}
+        extract_dir="${2}"
+    else
+        extract_dir="${pkg:0:extract_len}"
     fi
 
     # Create a file m5
