@@ -12,9 +12,6 @@ if [ -f ${OPENSHIFT_RUN_DIR}/php-fpm.pid ];then
     kill -QUIT `cat ${OPENSHIFT_RUN_DIR}/php-fpm.pid`
 fi
 
-# Force anything on port 8080 to stop
-lsof -n -i:8080 | grep LISTEN | awk '{ print $2 }' | uniq | xargs -r kill -9
-
 # Always succeed, otherwise OpenShift declines to run build and start
 # hooks.
 exit 0
