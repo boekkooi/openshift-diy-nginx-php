@@ -22,6 +22,7 @@ ICU_VERSION='54.1'
 
 LIBMCRYPT_VERSION='2.5.8'
 LIBTOOL_VERSION='2.4.6'
+BISON_VERSION='2.7.1'
 
 # Uncomment the following install it.
 #NODE_VERSION='0.12.0'
@@ -37,6 +38,9 @@ ROOT_DIR=${OPENSHIFT_RUNTIME_DIR}
 BUILD_DIR=${OPENSHIFT_TMP_DIR}/build
 CONFIG_DIR=${OPENSHIFT_DIY_DIR}/conf
 TEMPLATE_DIR=${OPENSHIFT_REPO_DIR}/.openshift/tmpl
+
+# Push the libs path to the PATH
+export PATH=${ROOT_DIR}/libs/bin:$PATH
 
 # Load functions
 source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_util

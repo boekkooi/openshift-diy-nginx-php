@@ -126,3 +126,41 @@ function check_icu() {
         fi
     fi
 }
+
+function install_bison() {
+    local pkg=bison-${BISON_VERSION}.tar.gz
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    # Get archive
+    download_and_unpack ${pkg} http://ftp.gnu.org/gnu/bison/${pkg}
+    pushd bison-${BISON_VERSION}
+
+    echo "Configuring Bison."
+    ./configure --prefix=${ROOT_DIR}/libs/ --libdir=${ROOT_DIR}/libs/lib64
+
+    echo "Compiling Bison."
+    make install
+
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function check_bison() {
+    local bin=${ROOT_DIR}/libs/bin/bison
+    if [[ ! -e  ${bin} ]]; then
+        echo "Bison not installed."
+        install_bison
+    else
+        local version=`${bin} --version | head -n 1 | grep -oh '[0-9.]*' | head -n 1 | tr -d '\n'`
+
+        if [[ ${version} != "${BISON_VERSION}"* ]]; then
+            echo "Bison old, version: ${version}."
+            install_bison
+        else
+            echo "Bison up to date, version: ${version}."
+        fi
+    fi
+}
