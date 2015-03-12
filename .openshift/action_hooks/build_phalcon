@@ -1,0 +1,46 @@
+#!/bin/bash
+
+function build_phalcon() {
+    local name=phalcon-v${PHALCON_VERSION}
+    local pkg=${name}.tar.gz
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    # Get archive
+    download_and_unpack ${pkg} https://github.com/phalcon/cphalcon/archive/${pkg} cphalcon-${name}
+    pushd cphalcon-${name}/build/64bits
+
+    echo "Configuring Phalcon."
+    ${ROOT_DIR}/php5/bin/phpize -clean
+    ./configure \
+        --with-php-config=${ROOT_DIR}/php5/bin/php-config \
+        --enable-phalcon
+
+    # Install PhalconPHP
+    echo "Compiling Phalcon."
+    make install
+    echo 'extension=phalcon.so' > ${OPENSHIFT_RUNTIME_DIR}/etc/php5/conf.d/phalcon.ini
+
+    echo "Cleaning build directory."
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function check_phalcon() {
+    local php_bin=${ROOT_DIR}/php5/bin/php
+    local phalcon_version=`${php_bin} -r "echo phpversion('phalcon');"`
+
+    if [[ ${PHALCON_VERSION} != ${phalcon_version} ]]; then
+        echo "Phalcon not installed or old version ${phalcon_version}"
+        build_phalcon
+    else
+        echo "Phalcon up to date, version: ${phalcon_version}."
+    fi
+}
+
+# Install phalcon when a version exists
+if [ ! -z "${PHALCON_VERSION}" ]; then
+    check_phalcon
+fi

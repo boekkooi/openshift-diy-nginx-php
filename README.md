@@ -32,7 +32,7 @@ The web folder currently used. You can change this in `.openshift/tmpl/nginx.con
 
 ## Usage
 
-To get PHP 5.5 working at OpenShift, you have to do the following:
+To get PHP 5.6 working at OpenShift, you have to do the following:
 
 1. Create a new Openshift "Do-It-Yourself" application
 2. Clone this repository
@@ -43,25 +43,37 @@ To get PHP 5.5 working at OpenShift, you have to do the following:
 7. Wait for build to finish (This may take at least an hour)
 8. Open http://appname-namespace.rhcloud.com/ to verify
 
-## Other
+## Extra's
 
-When using the action hooks within you own project by copy-paste method don't forget todo `git update-index --chmod=+x -- $(git ls-files .openshift/action_hooks/*)`.
+#### Nodejs
+Support for [NodeJS](http://nodejs.org/) is availible!
+Just uncomment `NODE_VERSION` in `.openshift/action_hooks/build` and commit/push the file.
 
-Currently [nodejs](http://nodejs.org/) will only be build when the version is not the same a the one installed by default, it will just create a proxy for npm so it can be used with less problems.
+#### Phalcon Framework
+Support for [Phalcon](http://phalconphp.com) is availible!
+Just uncomment `PHALCON_VERSION` in `.openshift/action_hooks/build` and commit/push the file.
 
 ## Known issues
 
 #### PHP 5.4 won't build
-To get PHP 5.4 to build open `.openshift/action_hooks/build_php` and remove `--enable-opcache`(line: 64).
+To get PHP 5.4 to build open `.openshift/action_hooks/build_php` and remove `--enable-opcache`(line: 68).
 
 #### Only index.php works in root dir
 Currently the `.openshift/tmpl/nginx.conf.tmpl` configuration template for nginx only redirects to the `web/index.php` file.
 You can change this by editing the template file. Also see http://wiki.nginx.org/Symfony for some extra information.
 
+#### The hooks are not executing
+This probably happens because they are not executable.
+Just do `git update-index --chmod=+x -- $(git ls-files .openshift/action_hooks/*)` in your project root and commit/push.
+
 #### Openshift disconnects on build
 This seems to be a problem within openshift (see https://www.openshift.com/forums/openshift/openshift-build-timeout).
 
-To resume the build, first make an arbitary change to your local repo (e.g. add some text to README.md), commit that change and then do another `git push --force "openshift" master:master`. 
+To resume the build, first make an arbitary change to your local repo (e.g. add some text to README.md), commit that change and then do another `git push --force "openshift" master:master`.
+
+#### Other
+Maybe have a look at [stackoverflow](http://stackoverflow.com/questions/tagged/openshift) and if you end up empty-handed just [create a issue](https://github.com/boekkooi/openshift-diy-nginx-php/issues).
+
 ## Thanks
 
 Thanks to the following people:
@@ -79,11 +91,3 @@ Some articles that mention how you can use this repo and other related articles:
 * [How to Run Nginx PHP-FPM under OpenShift](https://www.openshift.com/blogs/how-to-run-nginx-php-fpm-under-openshift) a cartridge created by [Getup Cloud](http://getupcloud.com/index_en.html)
  
 If you wrote a article about openshit and nginx+php please let me know so I can add it to the list.
-
-## Todo's
-This is stuff which needs to be done right now. Feel free to do a pull request!
-
-* Test update functionality more thoroughly
-* Test with Jenkins (http://jenkins-ci.org/) builds
-* Get a [cup of coffee](https://www.gittip.com/Warnar%20Boekkooi/)
-

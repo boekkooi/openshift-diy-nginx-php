@@ -74,3 +74,8 @@ function check_node() {
     fi
     install_node_proxy
 }
+
+# Install node when a version exists
+if [ ! -z "${NODE_VERSION}" ]; then
+    check_node
+fi
