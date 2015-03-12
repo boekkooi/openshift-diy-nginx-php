@@ -6,11 +6,8 @@ function install_node() {
     mkdir -p ${BUILD_DIR}
     pushd ${BUILD_DIR}
 
-    echo "Downloading ${pkg}."
-    wget http://nodejs.org/dist/v${NODE_VERSION}/${pkg}
-
-    echo "Unpacking ${pkg}."
-    safe_unpack ${pkg}
+    # Get node
+    download_and_unpack ${pkg} http://nodejs.org/dist/v${NODE_VERSION}/${pkg}
     pushd node-v${NODE_VERSION}
 
     echo "Configuring NodeJs."
@@ -55,7 +52,7 @@ function check_node() {
 
     if [[ -e  ${local_bin} ]]; then
         if [[ v${NODE_VERSION} = ${node_version} ]]; then
-            echo "NodeJs local will be used"
+            echo "NodeJs local will be used, version: ${node_version}"
             install_node_proxy '/usr/bin/npm'
             return 0
         fi

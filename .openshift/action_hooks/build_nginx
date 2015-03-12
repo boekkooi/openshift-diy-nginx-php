@@ -9,23 +9,10 @@ function install_nginx() {
     mkdir -p ${ROOT_DIR}/etc/nginx
     pushd ${BUILD_DIR}
 
-    echo "Downloading ${pkg_pcre}."
-    wget --output-document=./${pkg_pcre} ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${pkg_pcre}
-
-    echo "Unpacking ${pkg_pcre}."
-    safe_unpack ${pkg_pcre}
-
-    echo "Downloading ${pkg_zlib}."
-    wget http://zlib.net/${pkg_zlib}
-
-    echo "Unpacking ${pkg_zlib}."
-    safe_unpack ${pkg_zlib}
-
-    echo "Downloading ${pkg}."
-    wget http://nginx.org/download/${pkg}
-
-    echo "Unpacking ${pkg}."
-    safe_unpack ${pkg}
+    # Get packages
+    download_and_unpack ${pkg_pcre} ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${pkg_pcre}
+    download_and_unpack ${pkg_zlib} http://zlib.net/${pkg_zlib}
+    download_and_unpack ${pkg} http://nginx.org/download/${pkg}
     pushd nginx-${NGINX_VERSION}
 
     echo "Configuring nginx."

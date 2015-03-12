@@ -7,14 +7,8 @@ function install_php() {
     mkdir -p ${ROOT_DIR}/etc/php5/conf.d
     pushd ${BUILD_DIR}
 
-    if [ ! -d php-${PHP_VERSION} ]; then
-        echo "Downloading ${pkg}."
-        wget --output-document=./${pkg} http://www.php.net/get/${pkg}/from/us1.php.net/mirror
-    fi
-
-    echo "Unpacking ${pkg}."
-    safe_unpack ${pkg}
-
+    # Get archive
+    download_and_unpack ${pkg} http://www.php.net/get/${pkg}/from/us1.php.net/mirror
     pushd php-${PHP_VERSION}
 
     if [[ ! -f config.log || `tail -n 1 config.log | tr -d '\n'` !=  'configure: exit 0' ]]; then
@@ -130,11 +124,8 @@ function install_pecl() {
     mkdir -p ${BUILD_DIR}
     pushd ${BUILD_DIR}
 
-    echo "Downloading ${pkg}."
-    wget http://pecl.php.net/get/${pkg}
-
-    echo "Unpacking ${pkg}."
-    safe_unpack ${pkg}
+    # Get archive
+    download_and_unpack ${pkg} http://pecl.php.net/get/${pkg}
     pushd ${1}-${2}
 
     echo "Configuring ${1}."
@@ -169,7 +160,7 @@ function check_pecl() {
     local pecl_version=`${php_bin} -r "echo phpversion('${1}');"`
 
     if [[ ${2} != ${pecl_version} ]]; then
-        echo "PHP pecl ${1} not installed or old version."
+        echo "PHP pecl ${1} not installed or old version ${pecl_version}."
         install_pecl ${1} ${2} ${3}
     else
         echo "PHP pecl ${1} up to date, version: ${2}."

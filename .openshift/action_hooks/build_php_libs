@@ -24,11 +24,8 @@ function install_libtool() {
     mkdir -p ${BUILD_DIR}
     pushd ${BUILD_DIR}
 
-    echo "Downloading ${pkg}."
-    wget --output-document=./${pkg} "http://gnu.xl-mirror.nl/libtool/${pkg}"
-
-    echo "Unpacking ${pkg}."
-    safe_unpack ${pkg}
+    # Get archive
+    download_and_unpack ${pkg} http://gnu.xl-mirror.nl/libtool/${pkg}
     pushd libtool-${LIBTOOL_VERSION}
 
     echo "Configuring Libtool."
@@ -49,11 +46,8 @@ function install_libmcrypt() {
     mkdir -p ${BUILD_DIR}
     pushd ${BUILD_DIR}
 
-    echo "Downloading ${pkg}."
-    wget --output-document=./${pkg} "http://sourceforge.net/projects/mcrypt/files/Libmcrypt/${LIBMCRYPT_VERSION}/${pkg}/download?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fmcrypt%2F&ts=${ts}&use_mirror=freefr"
-
-    echo "Unpacking ${pkg}."
-    safe_unpack ${pkg}
+    # Get archive
+    download_and_unpack ${pkg} "http://sourceforge.net/projects/mcrypt/files/Libmcrypt/${LIBMCRYPT_VERSION}/${pkg}/download?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fmcrypt%2F&ts=${ts}&use_mirror=freefr"
     pushd libmcrypt-${LIBMCRYPT_VERSION}
 
     echo "Configuring LibMCrypt."
@@ -98,11 +92,8 @@ function install_icu() {
     mkdir -p ${BUILD_DIR}
     pushd ${BUILD_DIR}
 
-    echo "Downloading ${pkg}."
-    wget --output-document=./${pkg} http://download.icu-project.org/files/icu4c/${ICU_VERSION}/${pkg}
-
-    echo "Unpacking ${pkg}."
-    safe_unpack ${pkg} icu
+    # Get archive
+    download_and_unpack ${pkg} http://download.icu-project.org/files/icu4c/${ICU_VERSION}/${pkg} icu
     pushd icu/source/
 
     echo "Configuring ICU."

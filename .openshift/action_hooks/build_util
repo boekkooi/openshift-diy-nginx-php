@@ -1,59 +1,69 @@
 #!/bin/bash
 
-function safe_unpack() {
-    if [ -z "${1}" ]; then
-        echo "unpack: expected 1 argument."
+function download_and_unpack() {
+    if [ -z "${1}" ] || [ -z "${2}" ]; then
+        echo "download_and_unpack: expected two arguments"
         return 1
     fi
+
     local pkg=${1}
-    local pkg_len=${#pkg}
+    local pkg_url=${2}
 
-    # Resolve extraction dir and tar arguments
+    # Determin the extraction directory
     local extract_dir=''
-
-    local tar_args=xfz
-    local extract_len=0
-    if [[ "${pkg}" == *'.tar.gz' ]]; then
-        extract_len=$((pkg_len - 7))
-    elif [[ "${pkg}" == *'.tgz' ]]; then
-        extract_len=$((pkg_len - 4))
-    elif [[ "${pkg}" == *'.tar.bz2' ]]; then
-        extract_len=$((pkg_len - 8))
-        tar_args=xfj
+    if [ ! -z "${3}" ]; then
+        extract_dir="${3}"
     else
-        echo "Unable extract file ${pkg}: unknown extension."
-        exit -1
-    fi
-
-    # Was a extraction dir given
-    if [ ! -z "${2}" ]; then
-        extract_dir="${2}"
-    else
+        local pkg_len=${#pkg}
+        if [[ "${pkg}" == *'.tar.gz' ]]; then
+            extract_len=$((pkg_len - 7))
+        elif [[ "${pkg}" == *'.tgz' ]]; then
+            extract_len=$((pkg_len - 4))
+        elif [[ "${pkg}" == *'.tar.bz2' ]]; then
+            extract_len=$((pkg_len - 8))
+        else
+            echo "ERROR: ${pkg} unknown extension."
+            exit -1
+        fi
         extract_dir="${pkg:0:extract_len}"
     fi
 
-    # Create a file m5
-    local check_file=`md5sum ${pkg} | awk '{ print $1 }'`
+    # Determin extract arguments
+    local extract_args=xfz
+    if [[ "${pkg}" == *'.tar.bz2' ]]; then
+        extract_args=xfj
+    fi
 
-    # Check if the md5 exists as a file
+    # Download the package
+    echo "Downloading ${pkg}:"
+    if [ ! -f "${pkg}" ] || [ ! -d "${extract_dir}" ]; then
+        wget --progress=dot --output-document=./${pkg} ${pkg_url}
+        echo "- done"
+    else
+        echo "- skipping file exists."
+    fi
+
+    # Check file (incase openshift hangsup)
+    echo "Unpacking ${pkg}:"
+    local check_file=`md5sum ${pkg} | awk '{ print $1 }'`
     if [ -f ${check_file} ]; then
-        echo "unpack: cleaning failed extraction."
+        echo "- cleaning failure."
         # We know extraction failed previously
         # So remove that folder
         rm -rf "${extract_dir}"
     elif [ -d "${extract_dir}" ]; then
         # The directory exists so don't extract again
-        echo "unpack: no need to unpack, directory exists."
+        echo "- skipping directory exists."
         return 0
     fi
 
     # Extract
     touch ${check_file}
-    tar ${tar_args} "${pkg}"
+    tar ${extract_args} "${pkg}"
 
     # Done so remove the check file
     rm ${check_file}
-    echo "unpack: Done."
+    echo "- done."
 
     return 0
 }
