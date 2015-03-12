@@ -96,6 +96,7 @@ function check_php() {
     check_libmcrypt
     check_icu
     check_bison
+    check_re2c
 
     local php_bin=${ROOT_DIR}/php5/bin/php
 

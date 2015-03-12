@@ -164,3 +164,44 @@ function check_bison() {
         fi
     fi
 }
+
+function install_re2c() {
+    # Remark if not in PATH add RE2C=${ROOT_DIR}/libs/bin/re2c to php ./configure
+    local pkg=re2c-${RE2C_VERSION}.tar.gz
+    local ts=`date +%s`
+
+    mkdir -p ${BUILD_DIR}
+    pushd ${BUILD_DIR}
+
+    # Get archive
+    download_and_unpack ${pkg} "http://sourceforge.net/projects/re2c/files/re2c/${RE2C_VERSION}/${pkg}/download?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fre2c%2F&ts=${ts}&use_mirror=freefr"
+    pushd re2c-${RE2C_VERSION}
+
+    echo "Configuring Re2c."
+    mkdir -p ${ROOT_DIR}/libs/lib64/
+    ./configure --prefix=${ROOT_DIR}/libs/ --libdir=${ROOT_DIR}/libs/lib64
+
+    echo "Compiling Re2c."
+    make install
+
+    popd
+    popd
+    rm -rf ${BUILD_DIR}
+}
+
+function check_re2c() {
+    local re2c_bin=${ROOT_DIR}/libs/bin/re2c
+    if [[ ! -e  ${re2c_bin} ]]; then
+        echo "Re2c not installed."
+        install_re2c
+    else
+        local version=`${re2c_bin} --version | head -n 1 | grep -oh '[0-9.]*$' | tr -d '\n'`
+
+        if [[ ${RE2C_VERSION} != ${version} ]]; then
+            echo "Re2c old, version: ${version}."
+            install_re2c
+        else
+            echo "Re2c up to date, version: ${version}."
+        fi
+    fi
+}

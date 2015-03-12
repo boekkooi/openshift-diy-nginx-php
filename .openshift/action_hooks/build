@@ -22,6 +22,7 @@ ICU_VERSION='54.1'
 
 LIBMCRYPT_VERSION='2.5.8'
 LIBTOOL_VERSION='2.4.6'
+RE2C_VERSION='0.14.1'
 BISON_VERSION='2.7.1'
 
 # Uncomment the following install it.
