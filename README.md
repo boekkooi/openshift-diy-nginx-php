@@ -3,7 +3,7 @@ This is a sample repository to get nginx + php fpm running on openshift.
 
 More information about openshift: https://openshift.redhat.com/
 
-**If you are using [openshift online](https://www.openshift.com/) you may want to take a look at the special [nginx](https://github.com/boekkooi/openshift-cartridge-nginx) and [php](https://github.com/boekkooi/openshift-cartridge-ph) catridge**
+**If you are using [openshift online](https://www.openshift.com/) you may want to take a look at the special [nginx](https://github.com/boekkooi/openshift-cartridge-nginx) and [php](https://github.com/boekkooi/openshift-cartridge-php) catridge**
 
 ## What's inside
 
