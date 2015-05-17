@@ -1,5 +1,5 @@
-# bcphung/openshift-diy-nginx-php
-This is a sample repository to get nginx + php fpm running on openshift.
+# bcphung/openshift-diy-nginx-php-phalcon
+This is diy cartridge repository to get nginx, PHP-FPM 5.6 with Phalcon running on OpenShift.
 
 More information about openshift: https://openshift.redhat.com/
 
@@ -48,17 +48,14 @@ To get PHP 5.6 working at OpenShift, you have to do the following:
 ## Extra's
 
 #### Nodejs
-Support for [NodeJS](http://nodejs.org/) is availible!
-Just uncomment `NODE_VERSION` in `.openshift/action_hooks/build` and commit/push the file.
+Support for [NodeJS](http://nodejs.org/) is enabled by default!
+To remove this, comment `NODE_VERSION` in `.openshift/action_hooks/build` and commit/push the file.
 
 #### Phalcon Framework
-Support for [Phalcon](http://phalconphp.com) is availible!
-Just uncomment `PHALCON_VERSION` in `.openshift/action_hooks/build` and commit/push the file.
+Support for [Phalcon](http://phalconphp.com) is enabled by default!
+To remove this, comment `PHALCON_VERSION` in `.openshift/action_hooks/build` and commit/push the file.
 
 ## Known issues
-
-#### PHP 5.4 won't build
-To get PHP 5.4 to build open `.openshift/action_hooks/build_php` and remove `--enable-opcache`(line: 68).
 
 #### Only index.php works in root dir
 Currently the `.openshift/tmpl/nginx.conf.tmpl` configuration template for nginx only redirects to the `web/index.php` file.
@@ -83,6 +80,7 @@ Thanks to the following people:
 * [@sgoettschkes](https://github.com/Sgoettschkes)
 * [@drejohnson](https://github.com/drejohnson)
 * [@openshift](https://github.com/openshift/)
+* [@boekkooi](https://github.com/boekkooi)
  
 ## Reading material
 
@@ -91,5 +89,3 @@ Some articles that mention how you can use this repo and other related articles:
 * [[DIY] Nginx + PHP 5.4](https://www.openshift.com/forums/openshift/diy-nginx-php-54) origional forum post.
 * [Nginx, PHP5.5 and Phalcon on OpenShift](http://www.sitepoint.com/nginx-php5-5-phalcon-openshift/) by [Bruno Skvorc](https://twitter.com/bitfalls) using a fork by [duythien](https://github.com/duythien).
 * [How to Run Nginx PHP-FPM under OpenShift](https://www.openshift.com/blogs/how-to-run-nginx-php-fpm-under-openshift) a cartridge created by [Getup Cloud](http://getupcloud.com/index_en.html)
- 
-If you wrote a article about openshit and nginx+php please let me know so I can add it to the list.
