@@ -9,7 +9,7 @@ function build_phalcon() {
 
     # Get archive
     download_and_unpack ${pkg} https://github.com/phalcon/cphalcon/archive/${pkg} cphalcon-${name}
-    pushd cphalcon-${name}/build/64bits
+    pushd cphalcon-${name}/ext #http://blog.phalconphp.com/post/115773676765/guide-upgrading-to-phalcon-2
 
     echo "Configuring Phalcon."
     ${ROOT_DIR}/php5/bin/phpize -clean
