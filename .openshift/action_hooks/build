@@ -26,7 +26,7 @@ RE2C_VERSION='0.14.2' #0.14.1
 BISON_VERSION='3.0.4' #2.7.1
 
 # Uncomment the following install it.
-NODE_VERSION='0.12.3' #0.12.0
+# NODE_VERSION='0.12.3' #0.12.0
 PHALCON_VERSION='2.0.1' #1.34.
 
 declare -A PHP_PECL
@@ -61,5 +61,5 @@ for ext in "${!PHP_PECL[@]}"; do
 done
 
 # Extra
-source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_node
+# source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_node
 source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_phalcon
