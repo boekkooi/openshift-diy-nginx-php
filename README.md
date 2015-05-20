@@ -48,8 +48,8 @@ To get PHP 5.6 working at OpenShift, you have to do the following:
 ## Extra's
 
 #### Nodejs
-Support for [NodeJS](http://nodejs.org/) is enabled by default!
-To remove this, comment `NODE_VERSION` in `.openshift/action_hooks/build` and commit/push the file.
+Support for [NodeJS](http://nodejs.org/) is disabled by default!
+To install this, uncomment `NODE_VERSION` and `source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_node` in `.openshift/action_hooks/build` and commit/push the file.
 
 #### Phalcon Framework
 Support for [Phalcon](http://phalconphp.com) is enabled by default!
