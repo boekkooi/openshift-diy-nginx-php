@@ -1,7 +1,7 @@
 # bcphung/openshift-diy-nginx-php-phalcon
 This is Do-It-Yourself cartridge repository to get nginx, PHP-FPM with Phalcon running on OpenShift.
 
-_Note: [master](https://github.com/bcphung/openshift-diy-nginx-php-phalcon/tree/master) branch always in "semi-read only" state, that means it only get merging with other branches instead of update directly. Well, clean-looking :wink:_
+_Note: [develop](https://github.com/bcphung/openshift-diy-nginx-php-phalcon/tree/develop), of course, develop means develop :laughing:_
 
 **Important!!!**
 This repository is up-to-date only, not futher developing unless breaking changes that has to come. For more advanced and feature-rich, you may want to check out (as recommended from [@boekkooi](https://github.com/boekkooi) :bowtie:):
@@ -91,4 +91,4 @@ Some articles that mention how you can use this repo and other related articles:
 * [How to Run Nginx PHP-FPM under OpenShift](https://www.openshift.com/blogs/how-to-run-nginx-php-fpm-under-openshift) a cartridge created by [Getup Cloud](http://getupcloud.com/index_en.html)
 
 #### P.S.
-To be honest :grin:, I myself will keep develop my repo to meet some standards that I'm seeking :yum:. Of course, I will freeze it when the time to come :innocent:.
+Forget what I told you at [master](https://github.com/bcphung/openshift-diy-nginx-php-phalcon/tree/master) :grimacing:.
