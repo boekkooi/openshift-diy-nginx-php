@@ -13,11 +13,11 @@ umask 077
 source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/common
 
 # Configure versions
-NGINX_VERSION='1.9.1' #1.8.0 for stable version
+NGINX_VERSION='1.9.2' #1.8.0 for stable version
 ZLIB_VERSION='1.2.8'
 PCRE_VERSION='8.37'
 
-PHP_VERSION='5.6.9' #5.5.25 for 5.5 series
+PHP_VERSION='5.6.10' #5.5.26 for 5.5 series
 ICU_VERSION='55.1'
 
 LIBMCRYPT_VERSION='2.5.8'
@@ -26,12 +26,12 @@ RE2C_VERSION='0.14.3'
 BISON_VERSION='3.0.4'
 
 # Uncomment the following install it.
-# NODE_VERSION='0.12.4'
-PHALCON_VERSION='2.0.2'
+# NODE_VERSION='0.12.5'
+PHALCON_VERSION='2.0.3'
 
 declare -A PHP_PECL
 declare -A PHP_PECL_CONFIGURE
-PHP_PECL=( ["mongo"]='1.6.8' ["apcu"]='4.0.7' )
+PHP_PECL=( ["mongo"]='1.6.10' ["apcu"]='4.0.7' )
 PHP_PECL_CONFIGURE=( )
 
 # Setup dir references
