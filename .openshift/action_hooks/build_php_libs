@@ -174,7 +174,7 @@ function install_re2c() {
     pushd ${BUILD_DIR}
 
     # Get archive
-    download_and_unpack ${pkg} "http://sourceforge.net/projects/re2c/files/re2c/${RE2C_VERSION}/${pkg}/download?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fre2c%2F&ts=${ts}&use_mirror=freefr"
+    download_and_unpack ${pkg} "http://sourceforge.net/projects/re2c/files/old/${pkg}/download?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fre2c%2F&ts=${ts}&use_mirror=freefr"
     pushd re2c-${RE2C_VERSION}
 
     echo "Configuring Re2c."
