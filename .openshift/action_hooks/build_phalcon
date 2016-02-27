@@ -13,8 +13,8 @@ function build_phalcon() {
 
     # patch install
     sed \
-        -e "s~phpize ~${PHP_BIN_DIR}/phpize ~g" \
-        -e "s~./configure ~./configure --with-php-config=${PHP_BIN_DIR}/php-config ~g" \
+        -e "s~phpize ~${ROOT_DIR}/php5/bin/phpize ~g" \
+        -e "s~./configure ~./configure --with-php-config=${ROOT_DIR}/php5/bin/php-config ~g" \
         < install > openshift_install
     chmod +x openshift_install
         
