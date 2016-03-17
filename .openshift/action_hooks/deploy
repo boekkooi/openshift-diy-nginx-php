@@ -6,7 +6,7 @@ source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/common
 
 BUILD_DIR=${OPENSHIFT_TMP_DIR}/build
 NGINX_DIR=${OPENSHIFT_RUNTIME_DIR}/nginx/
-PHP_DIR=${OPENSHIFT_RUNTIME_DIR}/php5/
+PHP_DIR=${OPENSHIFT_RUNTIME_DIR}/php/
 TEMPLATE_DIR=${OPENSHIFT_REPO_DIR}/.openshift/tmpl
 
 umask 077

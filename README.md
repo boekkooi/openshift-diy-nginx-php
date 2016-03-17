@@ -68,7 +68,7 @@ Just do `git update-index --chmod=+x -- $(git ls-files .openshift/action_hooks/*
 #### Openshift disconnects on build
 This seems to be a problem within openshift (see https://www.openshift.com/forums/openshift/openshift-build-timeout).
 
-To resume the build, first make an arbitary change to your local repo (e.g. add some text to README.md), commit that change and then do another `git push --force "openshift" master:master`.
+To resume the build, first make an arbitrary change to your local repo (e.g. add some text to README.md), commit that change and then do another `git push --force "openshift" master:master`.
 
 #### Other
 Maybe have a look at [stackoverflow](http://stackoverflow.com/questions/tagged/openshift) and if you end up empty-handed just [create a issue](https://github.com/boekkooi/openshift-diy-nginx-php/issues).
@@ -81,7 +81,7 @@ Thanks to the following people:
 * [@drejohnson](https://github.com/drejohnson)
 * [@openshift](https://github.com/openshift/)
 * [@boekkooi](https://github.com/boekkooi)
- 
+
 ## Reading material
 
 Some articles that mention how you can use this repo and other related articles:
