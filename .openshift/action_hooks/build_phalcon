@@ -9,18 +9,19 @@ function build_phalcon() {
 
     # Get archive
     download_and_unpack ${pkg} https://github.com/phalcon/cphalcon/archive/${pkg} cphalcon-${name}
-    pushd cphalcon-${name}/ext #http://blog.phalconphp.com/post/115773676765/guide-upgrading-to-phalcon-2
+    pushd cphalcon-${name}/build
 
-    echo "Configuring Phalcon."
-    ${ROOT_DIR}/php5/bin/phpize -clean
-    ./configure \
-        --with-php-config=${ROOT_DIR}/php5/bin/php-config \
-        --enable-phalcon
+    # patch install
+    sed \
+        -e "s~phpize ~${ROOT_DIR}/php/bin/phpize ~g" \
+        -e "s~./configure ~./configure --with-php-config=${ROOT_DIR}/php/bin/php-config ~g" \
+        < install > openshift_install
+    chmod +x openshift_install
 
     # Install PhalconPHP
     echo "Compiling Phalcon."
-    make install
-    echo 'extension=phalcon.so' > ${OPENSHIFT_RUNTIME_DIR}/etc/php5/conf.d/phalcon.ini
+    ./openshift_install
+    echo 'extension=phalcon.so' > ${OPENSHIFT_RUNTIME_DIR}/etc/php/conf.d/phalcon.ini
 
     echo "Cleaning build directory."
     popd
@@ -29,7 +30,7 @@ function build_phalcon() {
 }
 
 function check_phalcon() {
-    local php_bin=${ROOT_DIR}/php5/bin/php
+    local php_bin=${ROOT_DIR}/php/bin/php
     local phalcon_version=`${php_bin} -r "echo phpversion('phalcon');"`
 
     if [[ ${PHALCON_VERSION} != ${phalcon_version} ]]; then
