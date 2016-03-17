@@ -13,7 +13,7 @@ function install_php() {
     pushd ${BUILD_DIR}
 
     # Get archive, auto detech closest mirror
-    download_and_unpack ${pkg} http://www.php.net/get/${pkg}/from/a/mirror
+    download_and_unpack ${pkg} http://www.php.net/get/${pkg}/from/this/mirror
     pushd php-${PHP_VERSION}
 
     if [[ ! -f config.log || `tail -n 1 config.log | tr -d '\n'` !=  'configure: exit 0' ]]; then
