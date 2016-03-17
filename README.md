@@ -1,16 +1,21 @@
-# boekkooi/openshift-nginx-php
-This is a sample repository to get nginx + php fpm running on openshift.
+# bcphung/openshift-diy-nginx-php-phalcon
+This is Do-It-Yourself cartridge repository to get nginx, PHP-FPM with Phalcon running on OpenShift.
 
-More information about openshift: https://openshift.redhat.com/
+_Note: [develop](https://github.com/bcphung/openshift-diy-nginx-php-phalcon/tree/develop), of course, develop means develop :laughing:_
 
-**If you are using [openshift online](https://www.openshift.com/) you may want to take a look at the special [nginx](https://github.com/boekkooi/openshift-cartridge-nginx) and [php](https://github.com/boekkooi/openshift-cartridge-php) catridge**
+**Important!!!**
+This repository is up-to-date only, not futher developing unless breaking changes that has to come. For more advanced and feature-rich, you may want to check out (as recommended from [@boekkooi](https://github.com/boekkooi) :bowtie:):
+- [nginx cartridge](https://github.com/bcphung/openshift-cartridge-nginx)
+- [PHP cartridge](https://github.com/bcphung/openshift-cartridge-php)
+
+More information about OpenShift: https://openshift.redhat.com/
 
 ## What's inside
 
 **The `.openshift/action_hooks` scripts:**
 
 * build:
-    - Build the versions of nginx, php and nodejs that are needed
+    - Build the versions of nginx, php and other components that are needed
 * build_*
     - The functions used for checking the versions and installing
 * deploy
@@ -25,8 +30,7 @@ More information about openshift: https://openshift.redhat.com/
 
 **The `.openshift/tmpl` templates:**
 
-Here are the templates used by the build and deploy scripts.
-Just customize away.
+Here are the templates used by the build and deploy scripts. Just customize away.
 
 **The `web/` nginx web folder:**
 
@@ -34,7 +38,7 @@ The web folder currently used. You can change this in `.openshift/tmpl/nginx.con
 
 ## Usage
 
-To get PHP 5.6 working at OpenShift, you have to do the following:
+To get everything working at OpenShift, you have to do the following:
 
 1. Create a new Openshift "Do-It-Yourself" application
 2. Clone this repository
@@ -47,18 +51,11 @@ To get PHP 5.6 working at OpenShift, you have to do the following:
 
 ## Extra's
 
-#### Nodejs
-Support for [NodeJS](http://nodejs.org/) is availible!
-Just uncomment `NODE_VERSION` in `.openshift/action_hooks/build` and commit/push the file.
-
-#### Phalcon Framework
-Support for [Phalcon](http://phalconphp.com) is availible!
-Just uncomment `PHALCON_VERSION` in `.openshift/action_hooks/build` and commit/push the file.
+#### Node.js
+Support for [Node.js](http://nodejs.org/) is disabled by default!
+To install this, uncomment `NODE_VERSION` and `source ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/build_node` in `.openshift/action_hooks/build` and commit/push the file.
 
 ## Known issues
-
-#### PHP 5.4 won't build
-To get PHP 5.4 to build open `.openshift/action_hooks/build_php` and remove `--enable-opcache`(line: 68).
 
 #### Only index.php works in root dir
 Currently the `.openshift/tmpl/nginx.conf.tmpl` configuration template for nginx only redirects to the `web/index.php` file.
@@ -83,13 +80,15 @@ Thanks to the following people:
 * [@sgoettschkes](https://github.com/Sgoettschkes)
 * [@drejohnson](https://github.com/drejohnson)
 * [@openshift](https://github.com/openshift/)
- 
+* [@boekkooi](https://github.com/boekkooi)
+
 ## Reading material
 
 Some articles that mention how you can use this repo and other related articles:
 
-* [[DIY] Nginx + PHP 5.4](https://www.openshift.com/forums/openshift/diy-nginx-php-54) origional forum post.
+* [DIY - Nginx + PHP 5.4](https://www.openshift.com/forums/openshift/diy-nginx-php-54) origional forum post.
 * [Nginx, PHP5.5 and Phalcon on OpenShift](http://www.sitepoint.com/nginx-php5-5-phalcon-openshift/) by [Bruno Skvorc](https://twitter.com/bitfalls) using a fork by [duythien](https://github.com/duythien).
 * [How to Run Nginx PHP-FPM under OpenShift](https://www.openshift.com/blogs/how-to-run-nginx-php-fpm-under-openshift) a cartridge created by [Getup Cloud](http://getupcloud.com/index_en.html)
- 
-If you wrote a article about openshit and nginx+php please let me know so I can add it to the list.
+
+#### P.S.
+Forget what I told you at [master](https://github.com/bcphung/openshift-diy-nginx-php-phalcon/tree/master) :grimacing:.

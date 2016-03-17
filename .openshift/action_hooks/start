@@ -11,4 +11,4 @@ echo "Starting nginx."
 ${OPENSHIFT_RUNTIME_DIR}/nginx/sbin/nginx
 
 echo "Starting php-fpm."
-${OPENSHIFT_RUNTIME_DIR}/php5/sbin/php-fpm
+${OPENSHIFT_RUNTIME_DIR}/php/sbin/php-fpm

@@ -9,20 +9,20 @@ function install_php() {
     local pkg=php-${PHP_VERSION}.tar.gz
 
     mkdir -p ${BUILD_DIR}
-    mkdir -p ${ROOT_DIR}/etc/php5/conf.d
+    mkdir -p ${ROOT_DIR}/etc/php/conf.d
     pushd ${BUILD_DIR}
 
-    # Get archive
-    download_and_unpack ${pkg} http://www.php.net/get/${pkg}/from/us1.php.net/mirror
+    # Get archive, auto detech closest mirror
+    download_and_unpack ${pkg} http://www.php.net/get/${pkg}/from/this/mirror
     pushd php-${PHP_VERSION}
 
     if [[ ! -f config.log || `tail -n 1 config.log | tr -d '\n'` !=  'configure: exit 0' ]]; then
         echo "Configuring PHP."
         ./configure \
             --with-libdir=lib64 \
-            --prefix=${ROOT_DIR}/php5 \
-            --with-config-file-path=${ROOT_DIR}/etc/php5/ \
-            --with-config-file-scan-dir=${ROOT_DIR}/etc/php5/conf.d/ \
+            --prefix=${ROOT_DIR}/php \
+            --with-config-file-path=${ROOT_DIR}/etc/php/ \
+            --with-config-file-scan-dir=${ROOT_DIR}/etc/php/conf.d/ \
             --with-icu-dir=${ROOT_DIR}/libs \
             --with-mcrypt=${ROOT_DIR}/libs \
             --with-layout=PHP \
@@ -80,15 +80,15 @@ function install_php() {
     local ini=${TEMPLATE_DIR}/php.ini.tmpl
     if [[ -e  ${ini} ]]; then
         echo "Copy ini for ${1}."
-        yes | cp ${ini} ${ROOT_DIR}/etc/php5/php.ini
+        yes | cp ${ini} ${ROOT_DIR}/etc/php/php.ini
     else
         echo "Copy php.ini from php.ini-production."
-        yes | cp php.ini-production ${ROOT_DIR}/etc/php5/php.ini
+        yes | cp php.ini-production ${ROOT_DIR}/etc/php/php.ini
     fi
     local ini=${TEMPLATE_DIR}/php_extra.ini.tmpl
     if [[ -e  ${ini} ]]; then
         echo "Copy ini for ${1}."
-        yes | cp ${ini} ${ROOT_DIR}/etc/php5/conf.d/php_extra.ini
+        yes | cp ${ini} ${ROOT_DIR}/etc/php/conf.d/php_extra.ini
     fi
 
     echo "Cleaning build directory."
@@ -98,7 +98,7 @@ function install_php() {
 }
 
 function check_php() {
-    local php_bin=${ROOT_DIR}/php5/bin/php
+    local php_bin=${ROOT_DIR}/php/bin/php
 
     if [[ ! -e  ${php_bin} ]]; then
         echo "PHP not installed."
@@ -131,9 +131,9 @@ function install_pecl() {
     pushd ${1}-${2}
 
     echo "Configuring ${1}."
-    ${ROOT_DIR}/php5/bin/phpize -clean
+    ${ROOT_DIR}/php/bin/phpize -clean
     ./configure \
-        --with-php-config=${ROOT_DIR}/php5/bin/php-config \
+        --with-php-config=${ROOT_DIR}/php/bin/php-config \
         ${3}
 
     echo "Compiling ${1}."
@@ -143,7 +143,7 @@ function install_pecl() {
     local ini=${TEMPLATE_DIR}/pecl/${1,,}.ini.tmpl
     if [[ -e  ${ini} ]]; then
         echo "Copy ini for ${1}."
-        yes | cp ${ini} ${ROOT_DIR}/etc/php5/conf.d/${1,,}.ini
+        yes | cp ${ini} ${ROOT_DIR}/etc/php/conf.d/${1,,}.ini
     fi
 
     echo "Cleaning build directory."
@@ -158,7 +158,7 @@ function check_pecl() {
         return 1
     fi
 
-    local php_bin=${ROOT_DIR}/php5/bin/php
+    local php_bin=${ROOT_DIR}/php/bin/php
     local pecl_version=`${php_bin} -r "echo phpversion('${1}');"`
 
     if [[ ${2} != ${pecl_version} ]]; then

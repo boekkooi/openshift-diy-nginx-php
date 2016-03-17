@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;
 
 ; All relative paths in this configuration file are relative to PHP's install
-; prefix (/var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php5). This prefix can be dynamicaly changed by using the
+; prefix (/var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php). This prefix can be dynamicaly changed by using the
 ; '-p' argument from the command line.
 
 ; Include one or more files. If glob(3) exists, it is used to include a bunch of
@@ -11,7 +11,7 @@
 ; file.
 ; Relative path can also be used. They will be prefixed by:
 ;  - the global prefix if it's been set (-p arguement)
-;  - /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php5 otherwise
+;  - /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php otherwise
 ;include=etc/fpm.d/*.conf
 
 ;;;;;;;;;;;;;;;;;;
@@ -20,14 +20,14 @@
 
 [global]
 ; Pid file
-; Note: the default prefix is /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php5/var
+; Note: the default prefix is /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php/var
 ; Default Value: none
 pid = ${OPENSHIFT_RUN_DIR}/php-fpm.pid
 
 ; Error log file
 ; If it's set to "syslog", log is sent to syslogd instead of being written
 ; in a local file.
-; Note: the default prefix is /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php5/var
+; Note: the default prefix is /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php/var
 ; Default Value: log/php-fpm.log
 error_log = ${OPENSHIFT_DIY_LOG_DIR}/php-fpm.log
 
@@ -129,7 +129,7 @@ error_log = ${OPENSHIFT_DIY_LOG_DIR}/php-fpm.log
 ; - 'chdir'
 ; - 'php_values'
 ; - 'php_admin_values'
-; When not set, the global prefix (or /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php5) applies instead.
+; When not set, the global prefix (or /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php) applies instead.
 ; Note: This directive can also be relative to the global prefix.
 ; Default Value: none
 ;prefix = /path/to/pools/$pool
@@ -499,7 +499,7 @@ security.limit_extensions = .php
 ; instead.
 
 ; Note: path INI options can be relative and will be expanded with the prefix
-; (pool, global or /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php5)
+; (pool, global or /var/lib/openshift/4855d819c2354586b985a4506a0898fe//diy-0.1/runtime//php)
 
 ; Default Value: nothing is defined by default except the values in php.ini and
 ;                specified at startup with the -d argument

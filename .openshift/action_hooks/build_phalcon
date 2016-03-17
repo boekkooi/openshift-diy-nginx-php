@@ -13,15 +13,15 @@ function build_phalcon() {
 
     # patch install
     sed \
-        -e "s~phpize ~${ROOT_DIR}/php5/bin/phpize ~g" \
-        -e "s~./configure ~./configure --with-php-config=${ROOT_DIR}/php5/bin/php-config ~g" \
+        -e "s~phpize ~${ROOT_DIR}/php/bin/phpize ~g" \
+        -e "s~./configure ~./configure --with-php-config=${ROOT_DIR}/php/bin/php-config ~g" \
         < install > openshift_install
     chmod +x openshift_install
-        
+
     # Install PhalconPHP
     echo "Compiling Phalcon."
     ./openshift_install
-    echo 'extension=phalcon.so' > ${OPENSHIFT_RUNTIME_DIR}/etc/php5/conf.d/phalcon.ini
+    echo 'extension=phalcon.so' > ${OPENSHIFT_RUNTIME_DIR}/etc/php/conf.d/phalcon.ini
 
     echo "Cleaning build directory."
     popd
@@ -30,7 +30,7 @@ function build_phalcon() {
 }
 
 function check_phalcon() {
-    local php_bin=${ROOT_DIR}/php5/bin/php
+    local php_bin=${ROOT_DIR}/php/bin/php
     local phalcon_version=`${php_bin} -r "echo phpversion('phalcon');"`
 
     if [[ ${PHALCON_VERSION} != ${phalcon_version} ]]; then
