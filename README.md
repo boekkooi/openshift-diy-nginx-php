@@ -81,7 +81,7 @@ Thanks to the following people:
 * [@drejohnson](https://github.com/drejohnson)
 * [@openshift](https://github.com/openshift/)
 * [@boekkooi](https://github.com/boekkooi)
- 
+
 ## Reading material
 
 Some articles that mention how you can use this repo and other related articles:
